@@ -17,45 +17,70 @@ export class GlogItem extends Item {
         const actorData = this.actor ? this.actor.data : {};
         const data = itemData.data;
         if (data.hasOwnProperty("quickslot")) {
-            if(data.quickslot) {
+            if (data.quickslot) {
                 data.equipped = true;
             }
         };
-
+        itemData.properties = itemData.properties || {};
     }
 
     // todo: precalculate a bunch of this ahead of time 
     // but sometimes fields don't exist until the item sheet
     // has been opened so initializing breaks.... later problem
     _getDamageType() {
-        return this.data.data.damageType;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.damageType;
     }
 
     _getAltDamageType() {
-        return this.data.data.formulaDamageType;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.formulaDamageType;
     }
 
     _getBonus() {
-        const maybeAbility = this.data.data.ability;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        const maybeAbility = data.ability;
         return (maybeAbility) ? S.Just(maybeAbility) : S.Nothing;
     }
 
     _getSecondaryBonus() {
-        if (this.data.data.hasOwnProperty("secondaryAbility")) {
-            const maybeAbility = this.data.data.secondaryAbility;
-            return (maybeAbility) ? S.Just(maybeAbility) : S.Nothing;    
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        if (data.hasOwnProperty("secondaryAbility")) {
+            const maybeAbility = data.secondaryAbility;
+            return (maybeAbility) ? S.Just(maybeAbility) : S.Nothing;
         } else {
             return S.Nothing;
         }
     }
 
     _getAlternativeDamage() {
-        const alternative = this.data.data.formula;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        const alternative = data.formula;
         return ((alternative) ? S.Just(alternative) : S.Nothing);
     }
 
     _getRegularDamage() {
-        const damage = this.data.data.damage;
+
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        const damage = data.damage;
         return ((damage) ? S.Just(damage) : S.Nothing);
 
     }
@@ -117,7 +142,11 @@ export class GlogItem extends Item {
      * @param type "meleeAttack" or "rangeAttack"
      */
     getLocalStatMods(type) {
-        const statMods = this.data.data.statMods;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        const statMods = data.statMods;
         let res = 0
         if (statMods.applied) {
             for (let elem of statMods.parts) {
@@ -138,39 +167,67 @@ export class GlogItem extends Item {
 
     // todo parse formulas/dice
     getWeaponDistance() {
-        const params = this.data.data.range;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        const params = data.range;
         const value = (params.value) ? params.value : 0;
         return (params.units === "ft") ? +value : 0;
     }
 
 
     _weaponType() {
-        return this.data.data.weaponType;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.weaponType;
     }
     _actionType() {
-        return this.data.data.actionType;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.actionType;
     }
 
     _secondaryAction() {
-        if (this.data.data.hasOwnProperty("secondaryAttackAction")) {
-            return this.data.data.secondaryAttackAction;
-        } else {
-            return null;
-        }
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.secondaryAttackAction ? data.secondaryAttackAction : null;
     }
     _activationType() {
-        return this.data.data.activation.type;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.activation.type;
     }
     _getTarget() {
-        return this.data.data.target;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.target;
     }
 
     _getRange() {
-        return this.data.data.range;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.range;
     }
 
     _getDuration() {
-        return this.data.data.duration;
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
+        return data.duration;
     }
 
     getDialogModes() {
@@ -184,8 +241,11 @@ export class GlogItem extends Item {
     }
 
     getWeaponDialogueModes() {
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
         const res = [];
-        const data = this.data.data;
         const hasDamage = (data.damage) ? true : false;
         (data.weaponType === "melee") ? res.push(actionTypes.melee) : res.push(actionTypes.range);
         if (hasDamage) {
@@ -198,9 +258,12 @@ export class GlogItem extends Item {
     }
 
     getSpellDialogueModes() {
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
         const res = [];
         const actionType = this._actionType();
-        const data = this.data.data;
         if (actionType) {
             (actionType === "melee") ? res.push(actionTypes.melee) : res.push(actionTypes.range);
         };
@@ -220,9 +283,12 @@ export class GlogItem extends Item {
     }
 
     getMiscDialogueModes() {
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
         const res = [];
         const actionType = this._actionType();
-        const data = this.data.data;
         const hasDamage = (data.damage) ? true : false
         if (actionType) {
             if (actionType === "melee" || actionType === "ranged") {
@@ -246,11 +312,12 @@ export class GlogItem extends Item {
     }
 
     getWeaponDamageComponents(isAlternative) {
+        const itemData = this.data;
+        const actorData = this.actor ? this.actor.data : {};
+        const data = itemData.data;
+
         const weaponType = (this.type === "weapon") ? this.data.data.weaponType : "na"
-        let spellDesc = ""
-        if (this.data.data.hasOwnProperty("casting")) {
-            spellDesc = this.data.data.casting;
-        }
+
         return {
             name: this.name,
             sourceItemType: this.type,
@@ -258,7 +325,7 @@ export class GlogItem extends Item {
             "bonusAtr": (!isAlternative) ? this._getBonus() : this._getSecondaryBonus(),
             "formulas": (!isAlternative) ? this._getParsedDamageFormula(this._getRegularDamage()) : this._getParsedDamageFormula(this._getAlternativeDamage()),
             "damageType": (!isAlternative) ? this._getDamageType() : this._getAltDamageType(),
-            "casting": spellDesc
+            "casting": data.casting || ""
         }
     }
 
@@ -267,14 +334,14 @@ export class GlogItem extends Item {
         if (this.type === "weapon") {
             return [];
         } else {
-        const res = []
-        const range = this._getRangeDetails();
-        const duration = this._getDurationDetails();
-        const template = this._getTemplateDetails();
-        if (range) { res.push(range) };
-        if (duration) { res.push(duration) };
-        if (template) { res.push(template) };
-        return res;
+            const res = []
+            const range = this._getRangeDetails();
+            const duration = this._getDurationDetails();
+            const template = this._getTemplateDetails();
+            if (range) { res.push(range) };
+            if (duration) { res.push(duration) };
+            if (template) { res.push(template) };
+            return res;
         }
     }
 

@@ -15,9 +15,11 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@league-of-foundry-developers/foundry-vtt-types": "^9.238.1",
     "gulp": "^4.0.2"
   },
   "devDependencies": {
+    "foundry-pc-types": "gitlab:foundry-projects/foundry-pc/foundry-pc-types",
     "gulp-less": "^4.0.1"
   }
 }

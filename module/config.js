@@ -1,4 +1,4 @@
-export const G = {}
+export const G = {};
 
 G.LOGO = ""; // TODO
 
@@ -88,7 +88,7 @@ G.stats = {
 };
 
 G.configStats = {
-    "str" : "Str",
+    "str": "Str",
     "dex": "Dex",
     "con": "Con",
     "int": "Int",
@@ -125,29 +125,31 @@ G.npcStats = {
     "fatigueMod": "Fatigue Modifier",
 }
 
-G.allStats = {...G.abilities, ...G.stats};
-G.modifiers = {...G.abilities, ...{
-    "def": "Defense",
-    "mv": "Move Rating",
-    "sth": "Stealth",
-    "save": "Save",
-    "invQuick": "Quick Slot Modifier",
-    "invSlow": "Slow Slot Modifier",
-    "initMod": "Iniative Modifier",
-    "doc": "Doctoring Skill",
-    "meleeCritRange": "Melee Crit Range",
-    "rangeCritRange": "Range Crit Range",
-    "meleeFumbleRange": "Melee Fumble Range",
-    "rangeFumbleRange": "Range Fumble Range",
-    "meleeAttack": "Melee Attack Modifier",
-    "meleeDamage": "Melee Damage Modifier",
-    "rangeAttack": "Range Attack Modifier",
-    "rangeDamage": "Range Damage Modifier",
-    "rangeDistanceMod": "Range Distance Modifier",
-    "rangeDecayMod": "Range Decay Modifier",
-    "er": "Encumbrance Modifier",
-    "fatigueMod": "Fatigue Modifier",
-}}
+G.allStats = { ...G.abilities, ...G.stats };
+G.modifiers = {
+    ...G.abilities, ...{
+        "def": "Defense",
+        "mv": "Move Rating",
+        "sth": "Stealth",
+        "save": "Save",
+        "invQuick": "Quick Slot Modifier",
+        "invSlow": "Slow Slot Modifier",
+        "initMod": "Iniative Modifier",
+        "doc": "Doctoring Skill",
+        "meleeCritRange": "Melee Crit Range",
+        "rangeCritRange": "Range Crit Range",
+        "meleeFumbleRange": "Melee Fumble Range",
+        "rangeFumbleRange": "Range Fumble Range",
+        "meleeAttack": "Melee Attack Modifier",
+        "meleeDamage": "Melee Damage Modifier",
+        "rangeAttack": "Range Attack Modifier",
+        "rangeDamage": "Range Damage Modifier",
+        "rangeDistanceMod": "Range Distance Modifier",
+        "rangeDecayMod": "Range Decay Modifier",
+        "er": "Encumbrance Modifier",
+        "fatigueMod": "Fatigue Modifier",
+    }
+}
 
 G.aux = {
     "fatigue": "Fatigue"
@@ -215,9 +217,10 @@ G.damageTypes = {
 };
 
 // Damage Resistance Types
-G.damageResistanceTypes = mergeObject(duplicate(G.damageTypes), {
+G.damageResistanceTypes = {
+    ...G.damageTypes,
     "physical": "Physical"
-});
+};
 
 /**
  * This Object defines the types of single or area targets which can be applied

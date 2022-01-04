@@ -16,19 +16,53 @@ import { GlogDice } from "../roll/dice.js";
  */
 export class GlogActor extends Actor {
 
+  /** @override */
+  prepareData() {
+    // Prepare data for the actor. Calling the super version of this executes
+    // the following, in order: data reset (to clear active effects),
+    // prepareBaseData(), prepareEmbeddedDocuments() (including active effects),
+    // prepareDerivedData().
+    super.prepareData();
+  }
+
+  /** @override */
+  prepareBaseData() {
+    super.prepareBaseData();
+    // Data modifications in this step occur before processing embedded
+    // documents or derived data.
+
+    console.log("preparing base data", this.data)
+
+  }
+
+  /**
+   * @override
+   * Augment the basic actor data with additional dynamic data. Typically,
+   * you'll want to handle most of your calculated/derived data in this step.
+   * Data calculated in this step should generally not exist in template.json
+   * (such as ability modifiers rather than ability scores) and should be
+   * available both inside and outside of character sheets (such as if an actor
+   * is queried and has a roll executed directly from it).
+   */
+
   /**
    * Augment the basic actor data with additional dynamic data.
    */
-  prepareData() {
-    super.prepareData();
+  prepareDerivedData() {
+    //super.prepareDerivedData();
 
     const actorData = this.data;
+    const data = actorData.data;
+
+    console.log("preparing derived data", this.data)
 
     switch (actorData.type) {
       case "character":
         return this._prepareCharacterData(actorData);
       case "npc":
         return this._prepareNpcData(actorData);
+      default:
+        throw new Error("Bad Actor type");
     }
 
   }
@@ -59,14 +93,14 @@ export class GlogActor extends Actor {
 
   /** Needed until I redo the compendium classes */
   _syncVersions(data) {
-    if(!data.stats.hasOwnProperty("meleeFumbleRange")) {
-      data.stats["meleeFumbleRange"] = {value: 0};
+    if (!data.stats.hasOwnProperty("meleeFumbleRange")) {
+      data.stats["meleeFumbleRange"] = { value: 0 };
     }
-    if(!data.stats.hasOwnProperty("rangeFumbleRange")) {
-      data.stats["rangeFumbleRange"] = {value: 0};
+    if (!data.stats.hasOwnProperty("rangeFumbleRange")) {
+      data.stats["rangeFumbleRange"] = { value: 0 };
     }
-    if(!data.aux.hasOwnProperty("bslots")) {
-      data.stats["bslots"] = {value: 0}
+    if (!data.aux.hasOwnProperty("bslots")) {
+      data.stats["bslots"] = { value: 0 }
     }
   }
 
@@ -76,7 +110,7 @@ export class GlogActor extends Actor {
    */
   _prepareCharacterData(actorData) {
     const data = actorData.data;
-    this._syncVersions(actorData.data); // needed until I redo the compendium example classes
+    this._syncVersions(data); // needed until I redo the compendium example classes
 
     /**
      * TODO need to clean these up but for now, on the template.json file 
@@ -113,15 +147,16 @@ export class GlogActor extends Actor {
     }
 
     for (let [s, stat] of Object.entries(data.primaryStats)) {
-      if(s === "meleeAttack" || s === "rangeAttack") {
+      if (s === "meleeAttack" || s === "rangeAttack") {
         data.primaryStats[s].override = uconfig["attack"];
       } else {
-      data.primaryStats[s].override = uconfig[s];
+        data.primaryStats[s].override = uconfig[s];
       }
     }
 
-   /************************************************************** */
+    /************************************************************** */
 
+    console.log("Actr about to calculate stat mods for ", actorData.items)
 
     // collect the statMods up front as this is used in several places
     const relevantStatMods = collectStatMods(actorData.items, G);
@@ -129,8 +164,8 @@ export class GlogActor extends Actor {
       [relevantStatMods.auto.mods, relevantStatMods.autoEffects.mods],
       G.modifiers
     );
-    data['relevantStatMods'] = relevantStatMods;
-    data['equippedModSummary'] = equippedModSummary;
+    data.relevantStatMods = relevantStatMods;
+    data.equippedModSummary = equippedModSummary;
 
     /**
      * Sequence:
@@ -403,7 +438,7 @@ export class GlogActor extends Actor {
   /** ROLLING WEAPON ATTACK  ********************************************************* */
 
   rollWeaponDialogue(item, weaponType) {
-    const data = item.data.data; 
+    const data = item.data.data;
     const proficient = (data.proficient) ? data.proficient : true;
     const config = {
       "weapon": {
@@ -576,7 +611,7 @@ export class GlogActor extends Actor {
         <input type="text" name="situation" placeholder="0">
       </div>
     </form>`
-    } else if (isSpell){
+    } else if (isSpell) {
       return `
       <form class="flexcol">
       <div class="form-group">
@@ -617,13 +652,13 @@ export class GlogActor extends Actor {
 
   /** MISC BUTTONS  */
 
-  async longRest(dialog=true, chat=true) {
-    const data = this.data.data 
-    let flavor = "" 
+  async longRest(dialog = true, chat = true) {
+    const data = this.data.data
+    let flavor = ""
     let dhp = 0;
     let recoveredValue = 0;
     if (data.hp.value < 0) {
-      dhp = 0 - data.hp.value 
+      dhp = 0 - data.hp.value
       flavor = "<p>Lethal damage removed. Now at 0 HP.</p>";
       recoveredValue = 0;
     } else {
@@ -636,10 +671,10 @@ export class GlogActor extends Actor {
     };
 
     await this.update(updateData);
-    if ( chat ) {
+    if (chat) {
       ChatMessage.create({
         user: game.user._id,
-        speaker: {actor: this, alias: this.name},
+        speaker: { actor: this, alias: this.name },
         flavor: flavor,
         content: `${this.name} has a night's rest. Recovers ${dhp} hp. Consumes 1 ration.`
       })
@@ -652,7 +687,7 @@ export class GlogActor extends Actor {
 
     const roll = new Roll(`1d6 + ${level}`).roll();
     const speaker = ChatMessage.getSpeaker({ actor: this });
-    
+
     let prefix = "";
     let newHP = 0;
     if (data.hp.value < 0) {

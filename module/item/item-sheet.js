@@ -34,6 +34,7 @@ export class GlogItemSheet extends ItemSheet {
 
   /** @override */
   getData() {
+
     const data = super.getData();
     data.labels = this.item.labels;
 
@@ -46,12 +47,14 @@ export class GlogItemSheet extends ItemSheet {
       data.effectInput = true;
     }
     data.itemStatus = this._getItemStatus(data.item);
+
+    console.log(data.item);
     data.itemProperties = this._getItemProperties(data.item);
     data.isPhysical = data.item.data.hasOwnProperty("slots");
 
     // Action Details
     data.isHealing = data.item.data.actionType === "heal";
-    
+
     return data;
   }
 
@@ -74,12 +77,12 @@ export class GlogItemSheet extends ItemSheet {
     if (!formData.data) formData = expandObject(formData);
 
     const mods = formData.data?.statMods;
-    if (mods) mods.parts = Object.values(mods?.parts || {}).map(d => [d[0] || "str", 
-      d[1] || "auto", 
-      d[2] || 0, 
-      d[3] || `${this.item.data.type}: ${this.item.data.name}`,
-      d[4] || "globally"])
-    
+    if (mods) mods.parts = Object.values(mods?.parts || {}).map(d => [d[0] || "str",
+    d[1] || "auto",
+    d[2] || 0,
+    d[3] || `${this.item.data.type}: ${this.item.data.name}`,
+    d[4] || "globally"])
+
     // Update the Item
     super._updateObject(event, formData);
   }
@@ -120,12 +123,12 @@ export class GlogItemSheet extends ItemSheet {
     else if (item.type === "equipment") {
       props.push(CONFIG.G.equipmentTypes[item.data.type]);
     }
- 
+
     // Action type
     if (item.data.actionType) {
       props.push(CONFIG.G.itemActionTypes[item.data.actionType]);
     }
-  
+
     return props.filter(p => !!p);
   }
 

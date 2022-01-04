@@ -59,8 +59,8 @@ Hooks.once('init', async function () {
   };
 
   // Define custom Entity classes
-  CONFIG.Actor.entityClass = GlogActor;
-  CONFIG.Item.entityClass = GlogItem;
+  CONFIG.Actor.documentClass = GlogActor;
+  CONFIG.Item.documentClass = GlogItem;
 
   // Register System Settings
   registerSystemSettings();
@@ -71,7 +71,7 @@ Hooks.once('init', async function () {
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("glog", GlogCharacterSheet, { types: ["character"], makeDefault: true, label: "GLOG.SheetClassCharacter" });
-  Actors.registerSheet("glog", GlogEnemySheet, { types: ["npc"], makeDefault: true, label: "GLOG.SheetClassNPC"});
+  Actors.registerSheet("glog", GlogEnemySheet, { types: ["npc"], makeDefault: true, label: "GLOG.SheetClassNPC" });
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("glog", GlogItemSheet, { makeDefault: true });
 

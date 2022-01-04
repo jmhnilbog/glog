@@ -27,17 +27,39 @@ export default class BaseGlogSheet extends ActorSheet {
 
     /** @override */
     getData() {
-        const data = super.getData();
-        data.dtypes = ["String", "Number", "Boolean"];
-        data['config'] = CONFIG.G
+        const context = super.getData();
 
-        // Ability Scores
-        for (let [a, abl] of Object.entries(data.actor.data.abilities)) {
-            abl.label = CONFIG.G.abilities[a];
+        const actorData = context.actor.data;
+
+        context.data = actorData.data;
+
+        context.dtypes = ["String", "Number", "Boolean"];
+        context.config = CONFIG.G
+
+        console.log()
+
+        const abilities = context.data.abilities;
+
+        console.log(context.data);
+
+        // Label ability scores.
+        for (let key in abilities) {
+            console.log(key, abilities[key]);
+            abilities[key].label = CONFIG.G.abilities[key];
+            console.log(key, abilities[key]);
         }
 
-        this._prepareTraits(data.actor.data.traits);
-        return data;
+
+        // Ability Scores
+        // for (let [a, abl] of Object.entries(data.actor.data.abilities)) {
+        //     abl.label = CONFIG.G.abilities[a];
+        // }
+
+        this._prepareTraits(context.data.traits);
+
+        context.rollData = context.actor.getRollData();
+
+        return context;
     }
 
     /* -------------------------------------------- */
@@ -83,6 +105,10 @@ export default class BaseGlogSheet extends ActorSheet {
             consumable: { label: "Consumable", items: [], dataset: { type: "consumable" } },
             loot: { label: "Loot", items: [], dataset: { type: "loot" }, isLoot: true }
         };
+
+        console.log('----')
+        console.log(data);
+        console.log(data.items);
 
         let [items, spells, feats, archetypes] = data.items.reduce((arr, item) => {
 
@@ -293,37 +319,37 @@ export default class BaseGlogSheet extends ActorSheet {
     /* -------------------------------------------- */
 
 
-      /**
-   * Handle rolling an Ability check, either a test or a saving throw
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  _onRollAbilityTest(event) {
-    event.preventDefault();
-    let ability = event.currentTarget.parentElement.dataset.ability;
-    this.actor.rollAbility(ability, {event: event});
-  }
+    /**
+ * Handle rolling an Ability check, either a test or a saving throw
+ * @param {Event} event   The originating click event
+ * @private
+ */
+    _onRollAbilityTest(event) {
+        event.preventDefault();
+        let ability = event.currentTarget.parentElement.dataset.ability;
+        this.actor.rollAbility(ability, { event: event });
+    }
 
-        /**
-   * Handle rolling an Ability check, either a test or a saving throw
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  _onRollDefSaveTest(event) {
-    event.preventDefault();
-    let ability = event.currentTarget.dataset.ability;
-    this.actor.rollAbility(ability, {event: event});
-  }
+    /**
+* Handle rolling an Ability check, either a test or a saving throw
+* @param {Event} event   The originating click event
+* @private
+*/
+    _onRollDefSaveTest(event) {
+        event.preventDefault();
+        let ability = event.currentTarget.dataset.ability;
+        this.actor.rollAbility(ability, { event: event });
+    }
 
     /**
    * Handle rolling of an item from the Actor sheet, obtaining the Item instance and dispatching to it's roll method
    * @private
    */
-  _onItemRoll(event) {
-    event.preventDefault();
-    const itemId = event.currentTarget.closest(".item").dataset.itemId;
-    const item = this.actor.getOwnedItem(itemId);
-    return this.actor.rollEquipment(item);
-  }
+    _onItemRoll(event) {
+        event.preventDefault();
+        const itemId = event.currentTarget.closest(".item").dataset.itemId;
+        const item = this.actor.getOwnedItem(itemId);
+        return this.actor.rollEquipment(item);
+    }
 
 }
